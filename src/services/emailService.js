@@ -1,6 +1,12 @@
 const { transporter } = require('../config/emailConfig');
 
+const TicketRepository = require('../repository/ticketRepository');
+
 class EmailService {
+    constructor() {
+        this.ticketRepository = new TicketRepository();
+    }
+
     async sendBasicEmail(sender, receiver, subject, body) {
         const mailOptions = {
             from: sender,
@@ -18,6 +24,37 @@ class EmailService {
             console.log(error);
         }
     }
+
+    async fetchPendingEmails(timestamp) {
+        try {
+            const tickets = await this.ticketRepository.get({ status: "PENDING" });
+            return tickets;
+        } catch (error) {
+            console.log("An error occured in service layer during fetching details of emails");
+            console.log(error);
+        }
+    }
+
+    async createNotification(data) {
+        try {
+            const ticket = await this.ticketRepository.create(data);
+            return ticket;
+        } catch (error) {
+            console.log("An error occured in service layer during creating Email reminder");
+            console.log(error);
+        }
+    }
+
+    async updateNotification(id, data) {
+        try {
+            const ticket = await this.ticketRepository.update(id, data);
+            return ticket;
+        } catch (error) {
+            console.log("An error occured in service layer while updating Email reminder");
+            console.log(error);
+        }
+    }
+
 }
 
 module.exports = EmailService;
