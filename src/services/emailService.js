@@ -55,6 +55,26 @@ class EmailService {
         }
     }
 
+    async subscribeEvents(payload) {
+        try {
+            const service = payload.service;
+            const data = payload.data;
+            switch(service) {
+                case 'CREATE_NOTIFICATION' : 
+                    await this.createNotification(data);
+                    break;
+                case 'SEND_BASIC_MAIL' : 
+                    await this.sendBasicEmail(data);
+                    break;
+                default : 
+                    console.log("No valid event received");
+            }
+        } catch (error) {
+            console.log("An error occured in service layer in subscribeEvents");
+            console.log(error);
+        }
+    }
+
 }
 
 module.exports = EmailService;
